@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 
 class Ingrediant
@@ -187,11 +188,47 @@ class Program
 
                 case "2":
                     Console.WriteLine("View All Recipes");
-                    foreach (Recipe r in recipes)
+                        Console.WriteLine("Please select a recipe to see more information about it. \n(To select a recipe, enter the corresponding number and press enter.)");
+                    for (int r = 0; r < recipes.Count; r++)
                     {
-                        Console.WriteLine($"Recipe Name: {r.recipeName}, \nIngredients: \n{r.recipeName}");
+                        Console.WriteLine($"{r + 1}.________________ \n");
+                        Console.WriteLine($"Recipe Name: {recipes[r].recipeName}");
+                        Console.WriteLine($"____________________\n.\n.");
                     }
-                    break;
+
+                    Console.WriteLine("\nPress select a recipe or press enter to continue...");
+                    bool validInput = false;
+                    while (!validInput)
+                    {
+                        ConsoleKeyInfo key = Console.ReadKey(true);
+                        if (char.IsDigit(key.KeyChar))
+                        {
+                            if (int.TryParse(key.KeyChar.ToString(), out int viewRecipeChoice))
+                            {
+                                if (viewRecipeChoice >= 1 && viewRecipeChoice <= recipes.Count)
+                                {
+                                    Console.WriteLine($"Recipe Number: {viewRecipeChoice}\nRecipe Name: {recipes[viewRecipeChoice - 1].recipeName}");
+                                    Console.ReadLine(); 
+                                    validInput = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid choice. Please try again.");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid input. Please enter a valid number.");
+                            }
+                        }
+                        else if (key.Key == ConsoleKey.Enter)
+                        {
+                            Console.WriteLine("Back to main menu");
+                            validInput = true;
+                        }
+                    }
+
+                        break;
                 case "3":
                     Console.WriteLine("Search for a Recipe");
                     // Add logic to search for a recipe
@@ -203,11 +240,8 @@ class Program
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
                     break;
-            }
-
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
-        }
+            }            
+        }     
     }
 
     static string Commit(string recipeName, string variable)
