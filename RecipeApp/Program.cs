@@ -43,63 +43,76 @@ class Ingrediant
 
         Console.Write("Enter your choice: ");
         string choice = Console.ReadLine();
-
+        string unit = "";
         switch (choice)
         {
             case "1":
                 Console.WriteLine("You selected Teaspoon");
+                unit = "tsp";
                 break;
             case "2":
                 Console.WriteLine("You selected Tablespoon");
+                unit = "tbsp";
                 break;
             case "3":
                 Console.WriteLine("You selected Fluid ounce");
+                unit = "fl oz";
                 break;
             case "4":
                 Console.WriteLine("You selected Cup");
+                unit = "cup";
                 break;
             case "5":
                 Console.WriteLine("You selected Pint");
+                unit = "pt";
                 break;
             case "6":
                 Console.WriteLine("You selected Quart");
+                unit = "qt";
                 break;
             case "7":
                 Console.WriteLine("You selected Gallon");
+                unit = "gal";
                 break;
             case "8":
                 Console.WriteLine("You selected Milliliter");
+                unit = "ml";
                 break;
             case "9":
                 Console.WriteLine("You selected Liter");
+                unit = "l";
                 break;
             case "10":
                 Console.WriteLine("You selected Ounce");
+                unit = "oz";
                 break;
             case "11":
                 Console.WriteLine("You selected Pound");
+                unit = "lb";
                 break;
             case "12":
                 Console.WriteLine("You selected Gram");
+                unit = "g";
                 break;
             case "13":
                 Console.WriteLine("You selected Kilogram");
+                unit = "kg";
                 break;
             default:
                 Console.WriteLine("Invalid choice. Please try again.");
                 break;
         }
 
-        UnitOfMeasure unit = new UnitOfMeasure();
+        UnitOfMeasure Unit = new UnitOfMeasure(unit, quantity);
     }
     public int Quantity { get; set; }
+
     // You can add more properties like name, unit, etc., if needed
 
-    struct UnitOfMeasure
+    public class UnitOfMeasure
     {
         public string Name { get; }
         public double BaseAmount { get; }
-
         public UnitOfMeasure(string name, double baseAmount)
         {
             Name = name;
@@ -126,7 +139,7 @@ class Recipe
     }
 
     public string recipeName { get; set; }
-    private List<Ingrediant> ingrediants { get; set; }
+    public List<Ingrediant> ingrediants { get; set; }
 
     internal void AddIngrediants()
     {
@@ -208,6 +221,11 @@ class Program
                                 if (viewRecipeChoice >= 1 && viewRecipeChoice <= recipes.Count)
                                 {
                                     Console.WriteLine($"Recipe Number: {viewRecipeChoice}\nRecipe Name: {recipes[viewRecipeChoice - 1].recipeName}");
+                                    foreach (Recipe r in recipes) {
+                                        for (int i = 0; i < r.ingrediants.Count(); i++) {
+                                            Console.WriteLine($"{r.ingrediants[i].Quantity} of {r.ingrediants[i].uni}");
+                                        }
+                                    }
                                     Console.ReadLine(); 
                                     validInput = true;
                                 }
