@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RecipeApp;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -229,92 +230,20 @@ class Program
 
         while (!exit)
         {
-            Console.Clear();
-            Console.WriteLine("Recipe Storage App");
-            Console.WriteLine("1. Add a Recipe");
-            Console.WriteLine("2. View All Recipes");
-            Console.WriteLine("3. Search for a Recipe");
-            Console.WriteLine("4. Exit");
-
-            Console.Write("\nEnter your choice: ");
-            string choice = Console.ReadLine();
+            string choice = MainMenu();
 
             switch (choice)
             {
                 case "1":
-                    Console.WriteLine("Add a Recipe");
-                    Console.Write("Enter recipe name:");
-                    string recipeName = Console.ReadLine();
-                    Recipe recipe = new Recipe(Commit(recipeName, "Name:"));
-                    recipes.Add(recipe);  // Add the recipe to the list before adding ingredients
-                    Console.WriteLine("Recipe created successfully!");
-                    recipe.AddIngredients();
+                    recipes.Add(NewRecipe());
+                    recipes[recipes.Count - 1].AddIngredients();
                     break;
                 case "2":
-                    Console.WriteLine("View All Recipes");
-                    Console.WriteLine("Please select a recipe to see more information about it. \n(To select a recipe, enter the corresponding number and press enter.)");
-                    for (int r = 0; r < recipes.Count; r++)
-                    {
-                        Console.WriteLine($"{r + 1}.________________ \n");
-                        Console.WriteLine($"Recipe Name: {recipes[r].recipeName}");
-                        Console.WriteLine($"____________________\n.\n.");
-                    }
-                    Console.WriteLine("\nPress select a recipe or press enter to continue...");
-                    bool validInput = false;
-                    while (!validInput)
-                    {
-                        ConsoleKeyInfo key = Console.ReadKey(true);
-                        if (char.IsDigit(key.KeyChar))
-                        {
-                            if (int.TryParse(key.KeyChar.ToString(), out int viewRecipeChoice))
-                            {
-                                if (viewRecipeChoice >= 1 && viewRecipeChoice <= recipes.Count)
-                                {
-                                    Console.WriteLine($"Recipe Number: {viewRecipeChoice}\nRecipe Name: {recipes[viewRecipeChoice - 1].recipeName}");
-                                    foreach (string[] ingredient in recipes[viewRecipeChoice - 1].Ingredients)
-                                    {
-                                        Console.WriteLine($"{ingredient[1]} {ingredient[2]} of {ingredient[0]}");
-                                    }
-                                    Console.WriteLine("Enter: Main Menu -- Edit Recipe(1):Edit Recipe.");
-                                    string userInput = Console.ReadLine();
-
-                                    switch (userInput)
-                                    {
-                                        case "":
-                                            Console.WriteLine("Back to main menu");
-                                            validInput = true;
-                                            break;
-                                        case "1":
-                                            // Edit recipe logic here
-                                            Console.WriteLine("Edit Recipe");
-                                            DisplayRecipeAndEdit(recipes[viewRecipeChoice-1]);
-                                            break;
-                                        default:
-                                            Console.WriteLine("Invalid input. Please try again.");
-                                            break;
-                                    }
-                                    validInput = true;
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Invalid choice. Please try again.");
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Invalid input. Please enter a valid number.");
-                            }
-                        }
-                        else if (key.Key == ConsoleKey.Enter)
-                        {
-                            Console.WriteLine("Back to main menu");
-                            validInput = true;
-                        }
-                    }
+                    ViewRecipes(recipes);
                     break;
                 case "3":
                     Console.WriteLine("Search for a Recipe");
-                    // Add logic to search for a recipe
+                    // Add logic to search for a recipe.
                     break;
                 case "4":
                     Console.WriteLine("Exiting...");
@@ -323,10 +252,76 @@ class Program
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
                     break;
-            }            
+            }
         }
-        void DisplayRecipeAndEdit(Recipe recipe)
+    }
+
+    private static void ViewRecipes(List <Recipe> recipes)
+    {
+        Console.WriteLine("View All Recipes");
+        Console.WriteLine("Please select a recipe to see more information about it. \n(To select a recipe, enter the corresponding number and press enter.)");
+        for (int r = 0; r < recipes.Count; r++)
         {
+            Console.WriteLine($"{r + 1}.________________ \n");
+            Console.WriteLine($"Recipe Name: {recipes[r].recipeName}");
+            Console.WriteLine($"____________________\n.\n.");
+        }
+        Console.WriteLine("\nPress select a recipe or press enter to continue...");
+        bool validInput = false;
+        while (!validInput)
+        {
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            if (char.IsDigit(key.KeyChar))
+            {
+                if (int.TryParse(key.KeyChar.ToString(), out int viewRecipeChoice))
+                {
+                    if (viewRecipeChoice >= 1 && viewRecipeChoice <= recipes.Count)
+                    {
+                        Console.WriteLine($"Recipe Number: {viewRecipeChoice}\nRecipe Name: {recipes[viewRecipeChoice - 1].recipeName}");
+                        foreach (string[] ingredient in recipes[viewRecipeChoice - 1].Ingredients)
+                        {
+                            Console.WriteLine($"{ingredient[1]} {ingredient[2]} of {ingredient[0]}");
+                        }
+                        Console.WriteLine("Enter: Main Menu -- Edit Recipe(1):Edit Recipe.");
+                        string userInput = Console.ReadLine();
+
+                        switch (userInput)
+                        {
+                            case "":
+                                Console.WriteLine("Back to main menu");
+                                validInput = true;
+                                break;
+                            case "1":
+                                // Edit recipe logic here
+                                Console.WriteLine("Edit Recipe");
+                                DisplayRecipeAndEdit(recipes[viewRecipeChoice - 1]);
+                                break;
+                            default:
+                                Console.WriteLine("Invalid input. Please try again.");
+                                break;
+                        }
+                        validInput = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice. Please try again.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                }
+            }
+            else if (key.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine("Back to main menu");
+                validInput = true;
+            }
+        }
+    }
+
+    private static void DisplayRecipeAndEdit(Recipe recipe)
+    {
             Console.WriteLine($"Recipe Name: {recipe.recipeName}");
             Console.WriteLine("Ingredients:");
             for (int i = 0; i < recipe.Ingredients.Length; i++)
@@ -360,7 +355,30 @@ class Program
                     break;
             }
         }
+
+    private static Recipe NewRecipe()
+    {
+        Console.WriteLine("Add a Recipe");
+        Console.Write("Enter recipe name:");
+        string recipeName = Console.ReadLine();
+        Recipe newRecipe = new Recipe(Commit(recipeName, "Name:"));
+        Console.WriteLine("Recipe created successfully!");
+        return newRecipe;
     }
+
+    private static string MainMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("Recipe Storage App");
+        Console.WriteLine("1. Add a Recipe");
+        Console.WriteLine("2. View All Recipes");
+        Console.WriteLine("3. Search for a Recipe");
+        Console.WriteLine("4. Exit");
+
+        Console.Write("\nEnter your choice: ");
+        return Console.ReadLine();
+    }
+
     static string Commit(string recipeName, string variable)
     {
         bool confirmInput = false;
