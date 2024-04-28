@@ -2,230 +2,230 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+/*
+class Recipe
+{
+    public string recipeName { get; set; }
+    public string Description;
+    public string[][] Ingredients;
 
-    class Recipe
+    public Recipe(string recipeName)
     {
-        public string recipeName { get; set; }
-        public string Description;
-        public string[][] Ingredients;
-
-        public Recipe(string recipeName)
-        {
-            this.recipeName = recipeName;
-            Ingredients = new string[0][]; // Initialize Ingredients as an empty array
-        }
-    public void EditIngredients()
-    {
-        Console.WriteLine("Edit Ingredients");
-
-        // Display current ingredients
-        for (int i = 0; i < Ingredients.Length; i++)
-        {
-            Console.WriteLine($"{i + 1}. {Ingredients[i][0]}, {Ingredients[i][1]} {Ingredients[i][2]}");
-        }
-
-        bool editIngredient = true;
-        while (editIngredient)
-        {
-            Console.Write("Enter the number of the ingredient to edit or 0 to exit: ");
-            string input = Console.ReadLine();
-            if (int.TryParse(input, out int index) && index >= 1 && index <= Ingredients.Length)
-            {
-                // Get new ingredient details
-                string name = GetNameIngredient();
-                int quantity = GetQuantityIngredient();
-                string unit = GetUnitIngredient();
-
-                // Update the ingredient at the specified index
-                Ingredients[index - 1] = new string[] { name, quantity.ToString(), unit };
-
-                Console.WriteLine("Ingredient updated successfully!");
-            }
-            else if (index == 0)
-            {
-                editIngredient = false;
-            }
-            else
-            {
-                Console.WriteLine("Invalid input. Please try again.");
-            }
-        }
+        this.recipeName = recipeName;
+        Ingredients = new string[0][]; // Initialize Ingredients as an empty array
     }
-    public void AddIngredients()
-    {
-        Console.WriteLine("Add Ingredients");
+public void EditIngredients()
+{
+    Console.WriteLine("Edit Ingredients");
 
-        bool addIngredient = true;
-        while (addIngredient)
+    // Display current ingredients
+    for (int i = 0; i < Ingredients.Length; i++)
+    {
+        Console.WriteLine($"{i + 1}. {Ingredients[i][0]}, {Ingredients[i][1]} {Ingredients[i][2]}");
+    }
+
+    bool editIngredient = true;
+    while (editIngredient)
+    {
+        Console.Write("Enter the number of the ingredient to edit or 0 to exit: ");
+        string input = Console.ReadLine();
+        if (int.TryParse(input, out int index) && index >= 1 && index <= Ingredients.Length)
         {
+            // Get new ingredient details
             string name = GetNameIngredient();
             int quantity = GetQuantityIngredient();
             string unit = GetUnitIngredient();
 
-            // Create a new ingredient array
-            string[] newIngredient = new string[] { name, quantity.ToString(), unit };
+            // Update the ingredient at the specified index
+            Ingredients[index - 1] = new string[] { name, quantity.ToString(), unit };
 
-            // Resize the Ingredients array and add the new ingredient
-            Array.Resize(ref Ingredients, Ingredients.Length + 1);
-            Ingredients[Ingredients.Length - 1] = newIngredient;
-
-            Console.WriteLine("Add another ingredient? (Y/N)");
-            string input = Console.ReadLine().ToUpper();
-            if (input != "Y")
-            {
-                addIngredient = false;
-            }
+            Console.WriteLine("Ingredient updated successfully!");
         }
-    }
-
-    private string GetUnitIngredient()
-    {
-        Console.WriteLine("Select a category:");
-        Console.WriteLine("1. Volume");
-        Console.WriteLine("2. Weight");
-
-        Console.Write("Enter your choice: ");
-        string categoryChoice = Console.ReadLine();
-
-        switch (categoryChoice)
+        else if (index == 0)
         {
-            case "1":
-                Console.WriteLine("Select a volume unit:");
-                Console.WriteLine("1. Teaspoon: tsp");
-                Console.WriteLine("2. Tablespoon: tbsp or T");
-                Console.WriteLine("3. Fluid ounce: fl oz");
-                Console.WriteLine("4. Cup: cup");
-                Console.WriteLine("5. Pint: pt");
-                Console.WriteLine("6. Quart: qt");
-                Console.WriteLine("7. Gallon: gal");
-                Console.WriteLine("8. Milliliter: ml");
-                Console.WriteLine("9. Liter: l");
-                break;
-            case "2":
-                Console.WriteLine("Select a weight unit:");
-                Console.WriteLine("1. Ounce: oz");
-                Console.WriteLine("2. Pound: lb");
-                Console.WriteLine("3. Gram: g");
-                Console.WriteLine("4. Kilogram: kg");
-                break;
-            default:
-                Console.WriteLine("Invalid choice. Please try again.");
-                break;
+            editIngredient = false;
         }
-
-        Console.Write("Enter your choice: ");
-        string choice = Console.ReadLine();
-        string unit = "";
-        switch (choice)
+        else
         {
-            case "1":
-                Console.WriteLine("You selected Teaspoon");
-                unit = "tsp";
-                break;
-            case "2":
-                Console.WriteLine("You selected Tablespoon");
-                unit = "tbsp";
-                break;
-            case "3":
-                Console.WriteLine("You selected Fluid ounce");
-                unit = "fl oz";
-                break;
-            case "4":
-                Console.WriteLine("You selected Cup");
-                unit = "cup";
-                break;
-            case "5":
-                Console.WriteLine("You selected Pint");
-                unit = "pt";
-                break;
-            case "6":
-                Console.WriteLine("You selected Quart");
-                unit = "qt";
-                break;
-            case "7":
-                Console.WriteLine("You selected Gallon");
-                unit = "gal";
-                break;
-            case "8":
-                Console.WriteLine("You selected Milliliter");
-                unit = "ml";
-                break;
-            case "9":
-                Console.WriteLine("You selected Liter");
-                unit = "l";
-                break;
-            case "10":
-                Console.WriteLine("You selected Ounce");
-                unit = "oz";
-                break;
-            case "11":
-                Console.WriteLine("You selected Pound");
-                unit = "lb";
-                break;
-            case "12":
-                Console.WriteLine("You selected Gram");
-                unit = "g";
-                break;
-            case "13":
-                Console.WriteLine("You selected Kilogram");
-                unit = "kg";
-                break;
-            default:
-                Console.WriteLine("Invalid choice. Please try again.");
-                break;
+            Console.WriteLine("Invalid input. Please try again.");
         }
-        return unit;
-    }
-    private int GetQuantityIngredient()
-    {
-        int quantity = 0;
-        bool validInput = false;
-        while (!validInput)
-        {
-            Console.WriteLine("Enter ingredient quantity:");
-            string ingrediantQuantity = Console.ReadLine();
-
-            try
-            {
-                quantity = int.Parse(ingrediantQuantity);
-                validInput = true;
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("Please enter a valid number.");
-            }
-        }
-        return quantity;
-    }
-    private string GetNameIngredient()
-    {
-        string name = "";
-        bool isConfirmed = false;
-
-        while (!isConfirmed)
-        {
-            Console.WriteLine("Enter ingredient name:");
-            name = Console.ReadLine();
-
-            Console.WriteLine($"You entered: {name}");
-            Console.WriteLine("Are you satisfied with this name? (Y/N)");
-
-            string confirmation = Console.ReadLine().ToUpper();
-
-            if (confirmation == "Y")
-            {
-                isConfirmed = true;
-            }
-        }
-
-        return name;
     }
 }
+public void AddIngredients()
+{
+    Console.WriteLine("Add Ingredients");
+
+    bool addIngredient = true;
+    while (addIngredient)
+    {
+        string name = GetNameIngredient();
+        int quantity = GetQuantityIngredient();
+        string unit = GetUnitIngredient();
+
+        // Create a new ingredient array
+        string[] newIngredient = new string[] { name, quantity.ToString(), unit };
+
+        // Resize the Ingredients array and add the new ingredient
+        Array.Resize(ref Ingredients, Ingredients.Length + 1);
+        Ingredients[Ingredients.Length - 1] = newIngredient;
+
+        Console.WriteLine("Add another ingredient? (Y/N)");
+        string input = Console.ReadLine().ToUpper();
+        if (input != "Y")
+        {
+            addIngredient = false;
+        }
+    }
+}
+
+private string GetUnitIngredient()
+{
+    Console.WriteLine("Select a category:");
+    Console.WriteLine("1. Volume");
+    Console.WriteLine("2. Weight");
+
+    Console.Write("Enter your choice: ");
+    string categoryChoice = Console.ReadLine();
+
+    switch (categoryChoice)
+    {
+        case "1":
+            Console.WriteLine("Select a volume unit:");
+            Console.WriteLine("1. Teaspoon: tsp");
+            Console.WriteLine("2. Tablespoon: tbsp or T");
+            Console.WriteLine("3. Fluid ounce: fl oz");
+            Console.WriteLine("4. Cup: cup");
+            Console.WriteLine("5. Pint: pt");
+            Console.WriteLine("6. Quart: qt");
+            Console.WriteLine("7. Gallon: gal");
+            Console.WriteLine("8. Milliliter: ml");
+            Console.WriteLine("9. Liter: l");
+            break;
+        case "2":
+            Console.WriteLine("Select a weight unit:");
+            Console.WriteLine("1. Ounce: oz");
+            Console.WriteLine("2. Pound: lb");
+            Console.WriteLine("3. Gram: g");
+            Console.WriteLine("4. Kilogram: kg");
+            break;
+        default:
+            Console.WriteLine("Invalid choice. Please try again.");
+            break;
+    }
+
+    Console.Write("Enter your choice: ");
+    string choice = Console.ReadLine();
+    string unit = "";
+    switch (choice)
+    {
+        case "1":
+            Console.WriteLine("You selected Teaspoon");
+            unit = "tsp";
+            break;
+        case "2":
+            Console.WriteLine("You selected Tablespoon");
+            unit = "tbsp";
+            break;
+        case "3":
+            Console.WriteLine("You selected Fluid ounce");
+            unit = "fl oz";
+            break;
+        case "4":
+            Console.WriteLine("You selected Cup");
+            unit = "cup";
+            break;
+        case "5":
+            Console.WriteLine("You selected Pint");
+            unit = "pt";
+            break;
+        case "6":
+            Console.WriteLine("You selected Quart");
+            unit = "qt";
+            break;
+        case "7":
+            Console.WriteLine("You selected Gallon");
+            unit = "gal";
+            break;
+        case "8":
+            Console.WriteLine("You selected Milliliter");
+            unit = "ml";
+            break;
+        case "9":
+            Console.WriteLine("You selected Liter");
+            unit = "l";
+            break;
+        case "10":
+            Console.WriteLine("You selected Ounce");
+            unit = "oz";
+            break;
+        case "11":
+            Console.WriteLine("You selected Pound");
+            unit = "lb";
+            break;
+        case "12":
+            Console.WriteLine("You selected Gram");
+            unit = "g";
+            break;
+        case "13":
+            Console.WriteLine("You selected Kilogram");
+            unit = "kg";
+            break;
+        default:
+            Console.WriteLine("Invalid choice. Please try again.");
+            break;
+    }
+    return unit;
+}
+private int GetQuantityIngredient()
+{
+    int quantity = 0;
+    bool validInput = false;
+    while (!validInput)
+    {
+        Console.WriteLine("Enter ingredient quantity:");
+        string ingrediantQuantity = Console.ReadLine();
+
+        try
+        {
+            quantity = int.Parse(ingrediantQuantity);
+            validInput = true;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please enter a valid number.");
+        }
+    }
+    return quantity;
+}
+private string GetNameIngredient()
+{
+    string name = "";
+    bool isConfirmed = false;
+
+    while (!isConfirmed)
+    {
+        Console.WriteLine("Enter ingredient name:");
+        name = Console.ReadLine();
+
+        Console.WriteLine($"You entered: {name}");
+        Console.WriteLine("Are you satisfied with this name? (Y/N)");
+
+        string confirmation = Console.ReadLine().ToUpper();
+
+        if (confirmation == "Y")
+        {
+            isConfirmed = true;
+        }
+    }
+
+    return name;
+}
+}*/
 class Program
 {
-    static void Main()
-    {
-        List<Recipe> recipes = new List<Recipe>();
+static void Main()
+{
+        /*List<Recipe> recipes = new List<Recipe>();
         bool exit = false;
 
         while (!exit)
@@ -265,7 +265,14 @@ class Program
             Console.WriteLine($"{r + 1}.________________ \n");
             Console.WriteLine($"Recipe Name: {recipes[r].recipeName}");
             Console.WriteLine($"____________________\n.\n.");
+            bool exit = false;
+            while(!exit)
+            exit = SelectRecipe(exit, recipes);
         }
+    }
+
+    private static bool SelectRecipe(bool exit, List <Recipe> recipes)
+    {
         Console.WriteLine("\nPress select a recipe or press enter to continue...");
         bool validInput = false;
         while (!validInput)
@@ -290,11 +297,13 @@ class Program
                             case "":
                                 Console.WriteLine("Back to main menu");
                                 validInput = true;
+                                exit = true;
                                 break;
                             case "1":
                                 // Edit recipe logic here
                                 Console.WriteLine("Edit Recipe");
                                 DisplayRecipeAndEdit(recipes[viewRecipeChoice - 1]);
+                                return exit = true;
                                 break;
                             default:
                                 Console.WriteLine("Invalid input. Please try again.");
@@ -318,6 +327,7 @@ class Program
                 validInput = true;
             }
         }
+            return exit;
     }
 
     private static void DisplayRecipeAndEdit(Recipe recipe)
@@ -328,7 +338,6 @@ class Program
             {
                 Console.WriteLine($"{i + 1}. {recipe.Ingredients[i][1]} {recipe.Ingredients[i][2]} of {recipe.Ingredients[i][0]}");
             }
-
             Console.WriteLine("Select an option:");
             Console.WriteLine("1. Edit Recipe");
             Console.WriteLine("2. Add Ingredient");
@@ -355,7 +364,6 @@ class Program
                     break;
             }
         }
-
     private static Recipe NewRecipe()
     {
         Console.WriteLine("Add a Recipe");
@@ -365,7 +373,6 @@ class Program
         Console.WriteLine("Recipe created successfully!");
         return newRecipe;
     }
-
     private static string MainMenu()
     {
         Console.Clear();
@@ -397,7 +404,7 @@ class Program
             {
                 Console.WriteLine($"Please enter another {variable}.");
                 recipeName = Console.ReadLine();
-                Console.WriteLine($"Save {variable}?");
+                Console.WriteLine($"Save {variable} {recipeName}?");
                 confirmInput = Confirm();
             }
 
@@ -414,6 +421,10 @@ class Program
     {     
             Console.WriteLine("(Y/N)");
             string input = Console.ReadLine().ToUpper();
-            return input == "Y";    
+            return input == "Y";    */
+
+        App app = new App();
+        app.Start();
+
     }
 }
