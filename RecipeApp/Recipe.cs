@@ -45,6 +45,11 @@ namespace RecipeApp
             return steps;
         }
 
+        public void setTitle(string? v)
+        {
+            this.title = v;
+        }
+
         public class Ingredient
         {
             private String name;

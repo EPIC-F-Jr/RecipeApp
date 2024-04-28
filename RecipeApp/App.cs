@@ -13,11 +13,13 @@ namespace RecipeApp
     class App
     {
         List<Recipe> recipes = new List<Recipe>();
-        public void Start() {
+        public void Start()
+        {
             Title = "Recipe App";
             RunMainMenu();
         }
-        private void RunMainMenu() {
+        private void RunMainMenu()
+        {
             WriteLine("App starting...");
             WriteLine("Press any key.");
             ConsoleKeyInfo keyPressed = ReadKey();
@@ -60,7 +62,8 @@ Welcome to the Recipe App!
             Menu mainMenu = new Menu(prompt, options);
             int selectedIndex = mainMenu.Run();
 
-            switch (selectedIndex) {
+            switch (selectedIndex)
+            {
                 case 0:
                     Clear();
                     NewRecipe();
@@ -109,7 +112,8 @@ Welcome to the Recipe App!
         private void NewRecipe()
         {
             Recipe newRecipe = new Recipe(CreateRecipe());
-            newRecipe.addIngredient(CreateIngredient());
+            Clear();
+            newRecipe.addIngredient(CreateIngredient(newRecipe));
             recipes.Add(newRecipe);
 
         }
@@ -139,7 +143,7 @@ Welcome to the Recipe App!
 
             // Use Menu class to allow the user to save or clear the name
             string[] options = { "Save Name", "Clear Name" };
-            Menu menu = new Menu("Select an option:", options);
+            Menu menu = new Menu($"Recipe name: {recipeNameBuilder.ToString()} \n\nSelect an option: ", options);
             int selectedIndex = menu.Run();
 
             if (selectedIndex == 0)
@@ -152,30 +156,71 @@ Welcome to the Recipe App!
                 return CreateRecipe(); // Recursive call to restart the process
             }
         }
-        private (string, int, string) CreateIngredient()
+        private (string, int, string) CreateIngredient(Recipe newRecipe)
         {
-            string ingredientName;
+            string ingredientName = "";
             int ingredientQuantity = 0;
-            string ingredientUnit;
+            string ingredientUnit = "";
             string confirmation;
+
+            Console.WriteLine($"Recipe name: {newRecipe.getTitle()}");
+            string[] options = {"Done", "Add Ingredient", "Rename Recipe", "Cancel" };
+            Menu menu = new Menu($"Recipe name: {newRecipe.getTitle()} \n\nSelect an option:", options);
+
+            int selectedIndex = -1;
 
             do
             {
-                WriteLine("Enter the ingredient name:");
-                ingredientName = ReadLine();
-
-                WriteLine("Enter the ingredient quantity:");
-                while (!int.TryParse(ReadLine(), out ingredientQuantity))
+                if (selectedIndex == -1)
                 {
-                    WriteLine("Invalid input. Please enter a valid integer.");
+                    Console.Clear();
+                    Console.WriteLine($"Recipe name: {newRecipe.getTitle()}");
+                    Console.WriteLine("Select an option:");
                 }
 
-                WriteLine("Enter the ingredient unit:");
-                ingredientUnit = ReadLine();
+                selectedIndex = menu.Run(); // Display the options and get the user's choice
 
-                Console.WriteLine($"You entered '{ingredientName}' as the ingredient name, {ingredientQuantity} as the quantity, and '{ingredientUnit}' as the unit. Is this correct? (yes/no)");
-                confirmation = ReadLine().ToLower();
-            } while (confirmation != "yes");
+                switch (selectedIndex)
+                {
+                    case 0: // Add Ingredient
+                        recipes.Add(newRecipe);
+                        Clear();
+                        Start();
+                        break;                   
+                    case 1: // Add Ingredient
+                        Clear();
+                        Console.WriteLine($"Recipe name: {newRecipe.getTitle()} \n");
+                        Console.WriteLine("Enter the ingredient name:");
+                        ingredientName = Console.ReadLine();
+
+                        Console.WriteLine("Enter the ingredient quantity:");
+                        while (!int.TryParse(Console.ReadLine(), out ingredientQuantity))
+                        {
+                            Console.WriteLine("Invalid input. Please enter a valid integer.");
+                        }
+
+                        Console.WriteLine("Enter the ingredient unit:");
+                        ingredientUnit = Console.ReadLine();
+
+                        Console.WriteLine($"You entered '{ingredientName}' as the ingredient name, {ingredientQuantity} as the quantity, and '{ingredientUnit}' as the unit.");
+                        Console.WriteLine("Press Enter to add another ingredient or any other key to return to the menu.");
+
+                        if (Console.ReadKey().Key != ConsoleKey.Enter)
+                        {
+                            selectedIndex = 2; // Return to the menu
+                        }
+                        break;
+                    case 2: // Rename Recipe
+                        newRecipe.setTitle(CreateRecipe());
+                        Console.WriteLine("Recipe renamed successfully.");
+                        CreateIngredient(newRecipe);
+                        break;
+                    case 3: // Cancel
+                        Console.WriteLine("Cancelled.");
+                        break;
+                }
+
+            } while (selectedIndex != 2); // Repeat until Cancel option is selected
 
             return (ingredientName, ingredientQuantity, ingredientUnit);
         }
