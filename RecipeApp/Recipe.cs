@@ -9,25 +9,34 @@ namespace RecipeApp
     public class Recipe
     {
         private String title;
+        private int multiplier;
         private List<Ingredient> ingredients;
-        private List<String> steps;
+        public delegate void CaloriesExceededEventHandler();
+        public event CaloriesExceededEventHandler CaloriesExceeded;
 
         public Recipe(String title)
         {
             this.title = title;
-            this.ingredients = new List<Ingredient>();
-            this.steps = new List<String>();
+            ingredients = new List<Ingredient>();
+            multiplier = 1;
         }
 
-        public void addIngredient((string name, int quantity, string unit) ingredientVals)
+        public void addIngredient(Ingredient ingredient)
         {
-            Ingredient ingredient = new Ingredient(ingredientVals.name, ingredientVals.quantity, ingredientVals.unit );
             this.ingredients.Add(ingredient);
         }
 
-        public void addStep(String description)
+        private void CheckTotalCalories()
         {
-            steps.Add(description);
+            int totalCalories = 0;
+            foreach (Ingredient i in ingredients)
+            {
+                totalCalories += i.getCalories();
+            }
+            if (totalCalories > 300)
+            {
+                CaloriesExceeded?.Invoke();
+            }
         }
 
         public String getTitle()
@@ -39,15 +48,44 @@ namespace RecipeApp
         {
             return ingredients;
         }
-
-        public List<String> getSteps()
+        public void setIngredients(List<Ingredient> Ingredients)
         {
-            return steps;
+            ingredients = Ingredients;
         }
 
         public void setTitle(string? v)
         {
-            this.title = v;
+            title = v;
+        }
+        public void Multiplier(int selectedIndex)
+        {
+            switch (selectedIndex)
+            {
+                case 0:
+                    this.multiplier++;
+                    foreach (Ingredient i in ingredients) { 
+                    i.setMultiplier(multiplier);
+                    }
+                    break;
+                case 1:
+                    if (multiplier == 1)
+                    {
+                        this.multiplier = 1;
+                        foreach (Ingredient i in ingredients) { i.setMultiplier(multiplier); }
+                    }
+                    else
+                    {
+                        this.multiplier--;
+                        foreach (Ingredient i in ingredients)
+                        {
+                            i.setMultiplier(multiplier);
+                        }
+                    }
+                    break;
+                case 2:
+                    multiplier = 1; foreach (Ingredient i in ingredients) { i.setMultiplier(multiplier); }
+                    break;
+            }
         }
 
         public class Ingredient
@@ -55,27 +93,65 @@ namespace RecipeApp
             private String name;
             private double quantity;
             private String unit;
+            private List<String> steps;
+            private int multiplier;
+            private string foodGroup;
+            private int calories;
 
             public Ingredient(String name, double quantity, String unit)
             {
                 this.name = name;
                 this.quantity = quantity;
                 this.unit = unit;
+                this.steps = new List<String>();
+                this.multiplier = 1;
+                this.foodGroup = "NULL";
             }
-
             public String getName()
             {
                 return name;
             }
+            public void setName(string Name)
+            {
+                this.name = Name;
+            }
+            public void setMultiplier(int Multiplier) {
+                this.multiplier = Multiplier;
+            }
 
             public double getQuantity()
             {
-                return quantity;
+                return quantity * multiplier;
+            }
+            public void setFoodGroup(string FoodGroup)
+            {
+                this.foodGroup = FoodGroup;
+            }
+            public void setCalories(int Calories)
+            {
+                this.calories = Calories;
+            }
+            public string getFoodGroup()
+            {
+               return this.foodGroup;
+            }
+            public int getCalories()
+            {
+                return this.calories;
             }
 
             public String getUnit()
             {
                 return unit;
+            }
+            public List<String> getSteps()
+            {
+                return steps;
+            }
+
+            public void addStep(String description)
+            {
+                steps.Add(description);
             }
         }
     }
