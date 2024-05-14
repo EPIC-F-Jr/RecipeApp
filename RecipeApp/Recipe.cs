@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RecipeApp
 {
-    public class Recipe
+    public class Recipe : IComparable<Recipe>
     {
         private String title;
         private int multiplier;
@@ -28,11 +28,7 @@ namespace RecipeApp
 
         private void CheckTotalCalories()
         {
-            int totalCalories = 0;
-            foreach (Ingredient i in ingredients)
-            {
-                totalCalories += i.getCalories();
-            }
+            int totalCalories = ingredients.Sum(i => i.getCalories());
             if (totalCalories > 300)
             {
                 CaloriesExceeded?.Invoke();
@@ -46,11 +42,14 @@ namespace RecipeApp
 
         public List<Ingredient> getIngredients()
         {
+            CheckTotalCalories();
             return ingredients;
         }
         public void setIngredients(List<Ingredient> Ingredients)
         {
             ingredients = Ingredients;
+            CheckTotalCalories();
+
         }
 
         public void setTitle(string? v)
@@ -86,6 +85,12 @@ namespace RecipeApp
                     multiplier = 1; foreach (Ingredient i in ingredients) { i.setMultiplier(multiplier); }
                     break;
             }
+        }
+
+        public int CompareTo(Recipe other)
+        {
+            if (other == null) return 1;
+            return this.title.CompareTo(other.title);
         }
 
         public class Ingredient

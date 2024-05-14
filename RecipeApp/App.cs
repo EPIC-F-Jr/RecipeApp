@@ -72,6 +72,7 @@ Welcome to the Recipe App!
                     case 0: // New Recipe
                         Clear();
                         newRecipe = new Recipe(NameRecipe()); // Create a new Recipe object
+                        newRecipe.CaloriesExceeded += OnCaloriesExceeded; // Subscribe to the event
                         ModifyRecipe(newRecipe);
                         break;
                     case 1:
@@ -90,6 +91,11 @@ Welcome to the Recipe App!
 
             WriteLine("Press any key to exit...");
             ReadKey(true);
+        }
+        private void OnCaloriesExceeded()
+        {
+            Console.WriteLine("Calories EXCEED 300");
+            Read();
         }
 
         private void ModifyRecipe(Recipe newRecipe)
@@ -213,6 +219,7 @@ Welcome to the Recipe App!
                             case 1:
                                 break;
                         }
+                        ModifyIngredient(ingredient, recipe);
                         break;
                     case 1: // Add Step
                         WriteLine("Adding STEP." +
@@ -229,13 +236,16 @@ Welcome to the Recipe App!
                             case 1:
                                 break;
                         }
+                        ModifyIngredient(ingredient, recipe);
                         break;
 
                     case 2: // Delete Step
                         string [] stepsOptions = ingredient.getSteps().ToArray();
                         menu = new Menu("Please select a step to delete.", stepsOptions);
                         selectedIndex = menu.Run();
-
+                        WriteLine($"{ingredient.getSteps()[selectedIndex]} DELETED!");
+                        ingredient.getSteps().Remove(ingredient.getSteps()[selectedIndex]);
+                        ModifyIngredient(ingredient, recipe);
                         break;
 
                                         
@@ -250,7 +260,7 @@ Welcome to the Recipe App!
                         break;
                     case 4: // Specify Calories
                         WriteLine("Please enter the calories of this ingredient.");
-                        int calories = Read();
+                        int calories = Int32.Parse(Console.ReadLine());
                         string[] CaloriesOptions = { "Save", "Cancel"};
                         menu = new Menu($"Are you sure about these INGREDIENT CALORIES?. {calories}", CaloriesOptions);
                         selectedIndex = menu.Run();
@@ -262,7 +272,8 @@ Welcome to the Recipe App!
                             case 1:
                                 ModifyIngredient(ingredient, recipe);
                                 break;
-                        }                      
+                        }
+                        ModifyIngredient(ingredient, recipe);
                         break;
 
                     case 5: // Delete Ingredient
@@ -287,7 +298,6 @@ Welcome to the Recipe App!
                         return;
                 }
             } while (selectedIndex != 0); // Continue until "Done" is selected
-            resetIngredients = newRecipe.getIngredients();
         }
 
         private void ExitApp()
@@ -304,10 +314,11 @@ Welcome to the Recipe App!
         private void DisplayRecipe()
         {
             List<string> recipeTitles = recipes.Select(r => r.getTitle()).ToList();
+            recipeTitles.Add("Sort ALPHABETICALLY.");
             recipeTitles.Add("Cancel");
             Menu recipeMenu = new Menu("Select a recipe:", recipeTitles.ToArray());
             int selectedIndex = recipeMenu.Run();
-            
+
             if (selectedIndex >= 0 && selectedIndex < recipes.Count)
             {
                 Recipe selectedRecipe = recipes[selectedIndex];
@@ -331,7 +342,7 @@ Welcome to the Recipe App!
                         ModifyRecipe(selectedRecipe);
                         break;
                     case 2: // Edit Ingredients
-                        string[] newOptions = new string[selectedRecipe.getIngredients().Count+1];
+                        string[] newOptions = new string[selectedRecipe.getIngredients().Count + 1];
                         for (int i = 0; i < selectedRecipe.getIngredients().Count;)
                         {
                             newOptions[i] = selectedRecipe.getIngredients()[i].getName();
@@ -364,6 +375,7 @@ Welcome to the Recipe App!
                 Console.ReadKey(true);
                 RunMainMenu();
             }
+            else if (selectedIndex == recipeTitles.Count - 2) { recipes.Sort(); DisplayRecipe(); }
             else if (selectedIndex == recipeTitles.Count - 1) { WriteLine("Running main menu"); RunMainMenu(); };
         }
 
